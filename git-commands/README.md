@@ -2,7 +2,7 @@
 
 ## 📌 Description
 
-This module showcases my learning and assessment progress for Git commands.
+This module showcases my learning and assessment progress for Git commands. For this module I have used W3 Schools Learning Platform
 
 ---
 
