@@ -23,9 +23,11 @@ I studied core JavaScript concepts through:
 - JavaScript Integration
 
 ## Assessment Method
-To assess learning outcomes, I built two mini projects:
+### 1. To assess learning outcomes, I built two mini projects:
 
-1. **Calculator**
-2. **Currency Converter**
+    1. **Calculator**
+    2. **Currency Converter**
 
+### 2. JavaScript MCQ + Coding Test:
 
+![js_test_results](./test_results.png)
