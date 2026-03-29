@@ -89,11 +89,10 @@ This helped me understand event-driven execution inside the database.
 
 ---
 
-### 7. Integrated Database with PHP
-
+### 7. Integrated Database with PHP using ODBC
 I connected PostgreSQL with PHP and:
 
-* Established database connection using `pg_connect()`
+* Established database connection using `odbc_connect()`
 * Executed queries and fetched results
 * Understood how backend applications interact with databases
 
