@@ -1,7 +1,7 @@
 
 ## 📌 Description
 
-This module showcases my learning and assessment progress for Linux commands. It reflects hands-on practice and understanding of command-line operations.
+This module showcases my learning and assessment progress for Linux commands. For this module I have used w3 schools learning platform.
 
 ---
 
