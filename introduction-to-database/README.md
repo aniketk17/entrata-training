@@ -2,7 +2,7 @@
 
 ## 📌 Overview
 
-As part of my pre-training preparation, I completed the Database module with a focus on both conceptual understanding and practical implementation. This repository contains all the artifacts created during the learning process.
+As part of my training preparation, I completed the Database module with a focus on both conceptual understanding and practical implementation.For the practical implementation, I worked on a real-world use case involving **Users** and **Orders** tables.
 
 ---
 
