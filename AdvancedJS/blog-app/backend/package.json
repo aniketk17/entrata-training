@@ -1,11 +1,12 @@
 {
-  "name": "blog-app-backend",
+  "name": "writeflow-backend",
   "version": "1.0.0",
-  "description": "Blog API with categories and voting (see roadmap.md)",
+  "description": "WriteFlow API — blog platform with categories and voting",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "node --watch src/server.js"
+    "dev": "node --watch src/server.js",
+    "seed": "node src/seeds/seed.js"
   },
   "keywords": [],
   "license": "ISC",
