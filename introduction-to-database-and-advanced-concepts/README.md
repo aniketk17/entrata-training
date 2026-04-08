@@ -101,3 +101,6 @@ I connected PostgreSQL with PHP and:
 * `php-integration/db_connect.php`
 
 ---
+
+### 8. QUIZ on SQL
+![Quiz](quiz.png)
