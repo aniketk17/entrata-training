@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SnapLink — URL Shortener</title>
+  <meta name="description" content="SnapLink is a lightning-fast, minimal URL shortener. Paste a long URL and get a clean short link instantly." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0a0a0f;
+      --surface:     #13131c;
+      --surface2:    #1c1c2a;
+      --border:      rgba(255,255,255,0.07);
+      --border-glow: rgba(139,92,246,0.4);
+      --accent:      #8b5cf6;
+      --accent2:     #6d28d9;
+      --accent-glow: rgba(139,92,246,0.25);
+      --pink:        #ec4899;
+      --cyan:        #06b6d4;
+      --green:       #10b981;
+      --red:         #ef4444;
+      --text:        #f0f0f8;
+      --muted:       #6b7280;
+      --radius:      14px;
+      --radius-sm:   8px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ── Animated background blobs ─────────────────────────────────────── */
+    .bg-gradient {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.15;
+      animation: drift 18s ease-in-out infinite;
+    }
+    .blob-1 { width: 600px; height: 600px; background: var(--accent);  top: -200px; left: -150px; animation-delay: 0s; }
+    .blob-2 { width: 500px; height: 500px; background: var(--pink);    bottom: -150px; right: -150px; animation-delay: -6s; }
+    .blob-3 { width: 400px; height: 400px; background: var(--cyan);    top: 40%; left: 50%; animation-delay: -12s; }
+
+    @keyframes drift {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33%       { transform: translate(40px, -30px) scale(1.05); }
+      66%       { transform: translate(-30px, 40px) scale(0.95); }
+    }
+
+    /* ── Layout ─────────────────────────────────────────────────────────── */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+
+    /* ── Header ─────────────────────────────────────────────────────────── */
+    header {
+      text-align: center;
+      padding: 72px 0 48px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--accent), var(--pink));
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      box-shadow: 0 0 24px var(--accent-glow);
+    }
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 30%, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    header h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 14px;
+    }
+    header h1 span {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--pink) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    /* ── Card ────────────────────────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      backdrop-filter: blur(20px);
+      transition: border-color 0.3s;
+    }
+    .card:focus-within {
+      border-color: var(--border-glow);
+      box-shadow: 0 0 40px rgba(139,92,246,0.08);
+    }
+
+    /* ── Form ────────────────────────────────────────────────────────────── */
+    .form-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .url-input {
+      flex: 1;
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.95rem;
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .url-input::placeholder { color: var(--muted); }
+    .url-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      padding: 14px 22px;
+      transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+      white-space: nowrap;
+    }
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(139,92,246,0.35);
+    }
+    .btn-primary:hover {
+      box-shadow: 0 6px 28px rgba(139,92,246,0.55);
+      transform: translateY(-1px);
+    }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-sm {
+      padding: 7px 13px;
+      font-size: 0.78rem;
+    }
+
+    .btn-ghost {
+      background: var(--surface2);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--accent); }
+
+    /* ── Alert banner ────────────────────────────────────────────────────── */
+    .alert {
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      font-size: 0.88rem;
+      margin-top: 18px;
+      display: none;
+      animation: slideDown 0.25s ease;
+    }
+    .alert.show { display: flex; align-items: flex-start; gap: 10px; }
+    .alert-success {
+      background: rgba(16,185,129,0.12);
+      border: 1px solid rgba(16,185,129,0.3);
+      color: #6ee7b7;
+    }
+    .alert-error {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.25);
+      color: #fca5a5;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Result box ─────────────────────────────────────────────────────── */
+    .result-box {
+      margin-top: 20px;
+      display: none;
+      background: var(--surface2);
+      border: 1px solid var(--border-glow);
+      border-radius: var(--radius-sm);
+      padding: 18px 20px;
+      animation: slideDown 0.3s ease;
+    }
+    .result-box.show { display: block; }
+    .result-label { font-size: 0.72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .result-row { display: flex; align-items: center; gap: 10px; }
+    .result-url {
+      flex: 1;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .result-url:hover { text-decoration: underline; }
+
+    /* ── Stats row ─────────────────────────────────────────────────────── */
+    .stats-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .stat-chip {
+      font-size: 0.73rem;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 10px;
+    }
+
+    /* ── Section heading ─────────────────────────────────────────────────── */
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 42px 0 18px;
+    }
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .count-badge {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* ── URL table ──────────────────────────────────────────────────────── */
+    .url-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .url-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 14px;
+      transition: border-color 0.2s, transform 0.15s;
+      animation: slideDown 0.3s ease both;
+    }
+    .url-item:hover { border-color: rgba(139,92,246,0.3); transform: translateX(2px); }
+
+    .url-item-left { overflow: hidden; }
+    .url-original {
+      font-size: 0.82rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 5px;
+    }
+    .url-short {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .url-short:hover { text-decoration: underline; }
+
+    .url-item-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .click-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.73rem;
+      font-weight: 600;
+      color: var(--cyan);
+      background: rgba(6,182,212,0.1);
+      border: 1px solid rgba(6,182,212,0.2);
+      border-radius: 20px;
+      padding: 3px 10px;
+    }
+    .url-date { font-size: 0.7rem; color: var(--muted); }
+
+    /* ── Empty & loading states ─────────────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--muted);
+    }
+    .empty-state .icon { font-size: 2.5rem; margin-bottom: 12px; }
+    .empty-state p { font-size: 0.9rem; }
+
+    .skeleton {
+      background: linear-gradient(90deg, var(--surface2) 25%, var(--surface) 50%, var(--surface2) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: var(--radius-sm);
+    }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .skeleton-row {
+      height: 72px;
+      margin-bottom: 10px;
+    }
+
+    /* ── Spinner ────────────────────────────────────────────────────────── */
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Toast ──────────────────────────────────────────────────────────── */
+    #toast-container {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .toast {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 18px;
+      font-size: 0.85rem;
+      max-width: 300px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      animation: toastIn 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toast.success { border-color: rgba(16,185,129,0.4); color: #6ee7b7; }
+    .toast.error   { border-color: rgba(239,68,68,0.35); color: #fca5a5; }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.95); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes toastOut {
+      from { opacity: 1; transform: translateY(0) scale(1); }
+      to   { opacity: 0; transform: translateY(12px) scale(0.95); }
+    }
+
+    /* ── Footer ─────────────────────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      margin-top: 64px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      padding-bottom: 20px;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Responsive ─────────────────────────────────────────────────────── */
+    @media (max-width: 540px) {
+      .form-row { flex-direction: column; }
+      .btn-primary { width: 100%; justify-content: center; }
+      .url-item { grid-template-columns: 1fr; }
+      .url-item-right { flex-direction: row; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background blobs -->
+  <div class="bg-gradient" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <div class="container">
+
+    <!-- Header -->
+    <header>
+      <div class="logo">
+        <div class="logo-icon">🔗</div>
+        <span class="logo-text">SnapLink</span>
+      </div>
+      <h1>Shorten any URL<br><span>in one snap</span></h1>
+      <p>Paste a long link, get a clean short URL instantly — no sign-up required.</p>
+    </header>
+
+    <!-- Shorten Card -->
+    <div class="card">
+      <form id="shorten-form" autocomplete="off">
+        <div class="form-row">
+          <input
+            id="url-input"
+            class="url-input"
+            type="url"
+            placeholder="https://your-very-long-url.com/goes/here"
+            required
+            spellcheck="false"
+          />
+          <button id="shorten-btn" class="btn btn-primary" type="submit">
+            <span id="btn-label">Shorten</span>
+          </button>
+        </div>
+      </form>
+
+      <!-- Error alert -->
+      <div id="error-alert" class="alert alert-error" role="alert">
+        <span>⚠️</span>
+        <span id="error-msg"></span>
+      </div>
+
+      <!-- Result box -->
+      <div id="result-box" class="result-box">
+        <div class="result-label">Your short link</div>
+        <div class="result-row">
+          <a id="result-url" class="result-url" href="#" target="_blank" rel="noopener noreferrer"></a>
+          <button id="copy-btn" class="btn btn-ghost btn-sm" onclick="copyShortUrl()">
+            📋 Copy
+          </button>
+        </div>
+        <div class="stats-row">
+          <span class="stat-chip" id="result-original">→</span>
+          <span class="stat-chip" id="result-created">🕐</span>
+        </div>
+      </div>
+    </div><!-- /.card -->
+
+    <!-- URLs List -->
+    <div class="section-head">
+      <span class="section-title">All Short URLs</span>
+      <span class="count-badge" id="url-count">—</span>
+    </div>
+
+    <div id="url-list" class="url-list">
+      <!-- skeleton placeholders shown while loading -->
+      <div class="skeleton skeleton-row"></div>
+      <div class="skeleton skeleton-row"></div>
+      <div class="skeleton skeleton-row"></div>
+    </div>
+
+    <footer>
+      Built with ❤️ &amp; PHP · <a href="/api/urls" target="_blank">View JSON API</a>
+    </footer>
+
+  </div><!-- /.container -->
+
+  <!-- Toast container -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <script>
+    const API_BASE = '';          // same origin
+    let currentShortUrl = '';
+
+    /* ───────────────────────────── Shorten ──────────────────────────────── */
+    document.getElementById('shorten-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const input = document.getElementById('url-input');
+      const url   = input.value.trim();
+      if (!url) return;
+
+      setLoading(true);
+      hideResult();
+      hideError();
+
+      try {
+        const res  = await fetch(`${API_BASE}/api/shorten`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ url }),
+        });
+        const data = await res.json();
+
+        if (!res.ok || data.status !== 'success') {
+          showError(data.message ?? 'Something went wrong. Please try again.');
+        } else {
+          showResult(data.data);
+          input.value = '';
+          loadUrls();   // refresh list
+        }
+      } catch {
+        showError('Network error — is the server running?');
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    /* ───────────────────────────── Helpers ──────────────────────────────── */
+    function setLoading(on) {
+      const btn   = document.getElementById('shorten-btn');
+      const label = document.getElementById('btn-label');
+      btn.disabled = on;
+      label.innerHTML = on
+        ? '<span class="spinner"></span> Shortening…'
+        : 'Shorten';
+    }
+
+    function showError(msg) {
+      const el  = document.getElementById('error-alert');
+      document.getElementById('error-msg').textContent = msg;
+      el.classList.add('show');
+    }
+    function hideError() {
+      document.getElementById('error-alert').classList.remove('show');
+    }
+
+    function showResult(data) {
+      currentShortUrl = data.short_url;
+
+      const box = document.getElementById('result-box');
+      const link = document.getElementById('result-url');
+      link.href        = data.short_url;
+      link.textContent = data.short_url;
+
+      const orig = data.original_url;
+      document.getElementById('result-original').textContent =
+        '→ ' + (orig.length > 55 ? orig.slice(0, 52) + '…' : orig);
+
+      const ts = data.created_at
+        ? new Date(data.created_at).toLocaleString(undefined, { dateStyle:'medium', timeStyle:'short' })
+        : 'just now';
+      document.getElementById('result-created').textContent = '🕐 ' + ts;
+
+      box.classList.add('show');
+    }
+    function hideResult() {
+      document.getElementById('result-box').classList.remove('show');
+    }
+
+    /* ───────────────────────────── Copy ─────────────────────────────────── */
+    async function copyShortUrl() {
+      if (!currentShortUrl) return;
+      try {
+        await navigator.clipboard.writeText(currentShortUrl);
+        toast('✅ Copied to clipboard!', 'success');
+        const btn = document.getElementById('copy-btn');
+        btn.textContent = '✅ Copied';
+        setTimeout(() => { btn.innerHTML = '📋 Copy'; }, 2000);
+      } catch {
+        toast('❌ Copy failed — please copy manually.', 'error');
+      }
+    }
+
+    /* ───────────────────────────── Toast ────────────────────────────────── */
+    function toast(msg, type = 'success') {
+      const el = document.createElement('div');
+      el.className = `toast ${type}`;
+      el.textContent = msg;
+      document.getElementById('toast-container').appendChild(el);
+      setTimeout(() => {
+        el.style.animation = 'toastOut 0.3s ease forwards';
+        el.addEventListener('animationend', () => el.remove());
+      }, 3000);
+    }
+
+    /* ───────────────────────────── URL List ─────────────────────────────── */
+    async function loadUrls() {
+      try {
+        const res  = await fetch(`${API_BASE}/api/urls`);
+        const data = await res.json();
+
+        const container = document.getElementById('url-list');
+        const countEl   = document.getElementById('url-count');
+
+        if (!res.ok || data.status !== 'success') {
+          container.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Could not load URLs.</p></div>`;
+          return;
+        }
+
+        const urls = data.data ?? [];
+        countEl.textContent = urls.length + ' link' + (urls.length !== 1 ? 's' : '');
+
+        if (urls.length === 0) {
+          container.innerHTML = `<div class="empty-state"><div class="icon">🏄</div><p>No links yet — shorten your first URL above!</p></div>`;
+          return;
+        }
+
+        container.innerHTML = '';
+        // newest first
+        [...urls].reverse().forEach((item, i) => {
+          const el = document.createElement('div');
+          el.className = 'url-item';
+          el.style.animationDelay = `${i * 40}ms`;
+
+          const ts = item.created_at
+            ? new Date(item.created_at).toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' })
+            : '';
+
+          const orig = item.original_url;
+          const origDisplay = orig.length > 60 ? orig.slice(0, 57) + '…' : orig;
+
+          el.innerHTML = `
+            <div class="url-item-left">
+              <div class="url-original" title="${escHtml(orig)}">${escHtml(origDisplay)}</div>
+              <a class="url-short" href="${escHtml(item.short_url)}" target="_blank" rel="noopener noreferrer">${escHtml(item.short_url)}</a>
+            </div>
+            <div class="url-item-right">
+              <span class="click-badge">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                ${item.clicks ?? 0} clicks
+              </span>
+              ${ts ? `<span class="url-date">${escHtml(ts)}</span>` : ''}
+            </div>
+          `;
+
+          // Copy on short-url click with Ctrl/Cmd
+          el.querySelector('.url-short').addEventListener('click', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+              e.preventDefault();
+              currentShortUrl = item.short_url;
+              copyShortUrl();
+            }
+          });
+
+          container.appendChild(el);
+        });
+
+      } catch {
+        document.getElementById('url-list').innerHTML =
+          `<div class="empty-state"><div class="icon">🔌</div><p>Cannot connect to the API server.</p></div>`;
+      }
+    }
+
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;');
+    }
+
+    /* ───────────────────────────── Init ─────────────────────────────────── */
+    loadUrls();
+  </script>
+</body>
+</html>
