@@ -1,10 +1,5 @@
 <?php
-/**
- * app/Controllers/UrlController.php
- *
- * Handles all URL-related HTTP actions.
- * All public methods emit JSON (except redirect()).
- */
+
 
 namespace App\Controllers;
 
@@ -19,7 +14,6 @@ class UrlController
         $this->model = new Url();
     }
 
-    // ── Helper: send a JSON response and stop ─────────────────────────────────
     private function json(array $payload, int $status = 200): void
     {
         http_response_code($status);
@@ -28,14 +22,12 @@ class UrlController
         exit;
     }
 
-    // ── Helper: read raw JSON request body ────────────────────────────────────
     private function inputJson(): array
     {
         $raw = file_get_contents('php://input');
         return json_decode($raw, true) ?? [];
     }
 
-    // ── POST /api/shorten ─────────────────────────────────────────────────────
     public function shorten(): void
     {
         $body = $this->inputJson();
@@ -45,7 +37,6 @@ class UrlController
             $this->json(['status' => 'error', 'message' => 'The "url" field is required.'], 422);
         }
 
-        // ── Regex validation ──────────────────────────────────────────────────
         if (!$this->model->isValidUrl($url)) {
             $this->json(['status' => 'error', 'message' => 'Invalid URL format.'], 422);
         }
@@ -72,14 +63,12 @@ class UrlController
         }
     }
 
-    // ── GET /api/urls ─────────────────────────────────────────────────────────
     public function index(): void
     {
         try {
             $urls = $this->model->all();
             $base = rtrim($_ENV['APP_BASE_URL'] ?? 'http://localhost', '/');
 
-            // Attach short_url to each row
             $urls = array_map(fn($row) => array_merge($row, [
                 'short_url' => $base . '/' . $row['short_code'],
             ]), $urls);
@@ -91,7 +80,6 @@ class UrlController
         }
     }
 
-    // ── GET /{code} — redirect ────────────────────────────────────────────────
     public function redirect(array $params): void
     {
         $code = $params['code'] ?? '';
@@ -104,10 +92,8 @@ class UrlController
             exit;
         }
 
-        // Track the click
         $this->model->incrementClicks($code);
 
-        // Redirect to the original URL
         header('Location: ' . $row['original_url'], true, 302);
         exit;
     }

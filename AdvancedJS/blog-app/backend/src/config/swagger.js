@@ -13,10 +13,8 @@ const swaggerUiOptions = {
   },
 };
 
-/**
- * Registers Swagger UI at `/api-docs` and raw spec at `/api-docs.json`.
- * @param {import('express').Application} app
- */
+
+ 
 function setupSwagger(app) {
   app.get("/api-docs.json", (req, res) => {
     res.json(openapiDocument);

@@ -5,10 +5,7 @@ function toObjectId(userId) {
   return new mongoose.Types.ObjectId(String(userId));
 }
 
-/**
- * Toggle upvote: remove if present; else add upvote and remove from downvotes.
- * @param {import('mongoose').Document} post
- */
+
 function applyUpvote(post, userId) {
   const uid = toObjectId(userId);
   const upIdx = post.upvotes.findIndex((id) => id.equals(uid));
@@ -20,10 +17,7 @@ function applyUpvote(post, userId) {
   }
 }
 
-/**
- * Toggle downvote: remove if present; else add downvote and remove from upvotes.
- * @param {import('mongoose').Document} post
- */
+
 function applyDownvote(post, userId) {
   const uid = toObjectId(userId);
   const downIdx = post.downvotes.findIndex((id) => id.equals(uid));

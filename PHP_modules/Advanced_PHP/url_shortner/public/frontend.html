@@ -10,7 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <style>
-    /* ── Reset & Base ─────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -43,7 +42,6 @@
       line-height: 1.6;
     }
 
-    /* ── Animated background blobs ─────────────────────────────────────── */
     .bg-gradient {
       position: fixed;
       inset: 0;
@@ -68,7 +66,6 @@
       66%       { transform: translate(-30px, 40px) scale(0.95); }
     }
 
-    /* ── Layout ─────────────────────────────────────────────────────────── */
     .container {
       position: relative;
       z-index: 1;
@@ -77,7 +74,6 @@
       padding: 0 20px 80px;
     }
 
-    /* ── Header ─────────────────────────────────────────────────────────── */
     header {
       text-align: center;
       padding: 72px 0 48px;
@@ -128,7 +124,6 @@
       margin: 0 auto;
     }
 
-    /* ── Card ────────────────────────────────────────────────────────────── */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -142,7 +137,6 @@
       box-shadow: 0 0 40px rgba(139,92,246,0.08);
     }
 
-    /* ── Form ────────────────────────────────────────────────────────────── */
     .form-row {
       display: flex;
       gap: 10px;
@@ -211,7 +205,6 @@
     }
     .btn-ghost:hover { color: var(--text); border-color: var(--accent); }
 
-    /* ── Alert banner ────────────────────────────────────────────────────── */
     .alert {
       border-radius: var(--radius-sm);
       padding: 14px 18px;
@@ -237,7 +230,6 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── Result box ─────────────────────────────────────────────────────── */
     .result-box {
       margin-top: 20px;
       display: none;
@@ -262,7 +254,6 @@
     }
     .result-url:hover { text-decoration: underline; }
 
-    /* ── Stats row ─────────────────────────────────────────────────────── */
     .stats-row {
       display: flex;
       gap: 10px;
@@ -278,7 +269,6 @@
       padding: 3px 10px;
     }
 
-    /* ── Section heading ─────────────────────────────────────────────────── */
     .section-head {
       display: flex;
       align-items: center;
@@ -299,7 +289,6 @@
       color: var(--muted);
     }
 
-    /* ── URL table ──────────────────────────────────────────────────────── */
     .url-list { display: flex; flex-direction: column; gap: 10px; }
 
     .url-item {
@@ -354,7 +343,6 @@
     }
     .url-date { font-size: 0.7rem; color: var(--muted); }
 
-    /* ── Empty & loading states ─────────────────────────────────────────── */
     .empty-state {
       text-align: center;
       padding: 48px 20px;
@@ -378,7 +366,6 @@
       margin-bottom: 10px;
     }
 
-    /* ── Spinner ────────────────────────────────────────────────────────── */
     .spinner {
       width: 16px;
       height: 16px;
@@ -390,7 +377,6 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Toast ──────────────────────────────────────────────────────────── */
     #toast-container {
       position: fixed;
       bottom: 28px;
@@ -424,7 +410,6 @@
       to   { opacity: 0; transform: translateY(12px) scale(0.95); }
     }
 
-    /* ── Footer ─────────────────────────────────────────────────────────── */
     footer {
       text-align: center;
       margin-top: 64px;
@@ -435,7 +420,6 @@
     footer a { color: var(--accent); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
 
-    /* ── Responsive ─────────────────────────────────────────────────────── */
     @media (max-width: 540px) {
       .form-row { flex-direction: column; }
       .btn-primary { width: 100%; justify-content: center; }
@@ -446,7 +430,6 @@
 </head>
 <body>
 
-  <!-- Background blobs -->
   <div class="bg-gradient" aria-hidden="true">
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
@@ -455,7 +438,6 @@
 
   <div class="container">
 
-    <!-- Header -->
     <header>
       <div class="logo">
         <div class="logo-icon">🔗</div>
@@ -465,7 +447,6 @@
       <p>Paste a long link, get a clean short URL instantly — no sign-up required.</p>
     </header>
 
-    <!-- Shorten Card -->
     <div class="card">
       <form id="shorten-form" autocomplete="off">
         <div class="form-row">
@@ -483,13 +464,11 @@
         </div>
       </form>
 
-      <!-- Error alert -->
       <div id="error-alert" class="alert alert-error" role="alert">
         <span>⚠️</span>
         <span id="error-msg"></span>
       </div>
 
-      <!-- Result box -->
       <div id="result-box" class="result-box">
         <div class="result-label">Your short link</div>
         <div class="result-row">
@@ -503,16 +482,14 @@
           <span class="stat-chip" id="result-created">🕐</span>
         </div>
       </div>
-    </div><!-- /.card -->
+    </div>
 
-    <!-- URLs List -->
     <div class="section-head">
       <span class="section-title">All Short URLs</span>
       <span class="count-badge" id="url-count">—</span>
     </div>
 
     <div id="url-list" class="url-list">
-      <!-- skeleton placeholders shown while loading -->
       <div class="skeleton skeleton-row"></div>
       <div class="skeleton skeleton-row"></div>
       <div class="skeleton skeleton-row"></div>
@@ -522,16 +499,14 @@
       Built with ❤️ &amp; PHP · <a href="/api/urls" target="_blank">View JSON API</a>
     </footer>
 
-  </div><!-- /.container -->
+  </div>
 
-  <!-- Toast container -->
   <div id="toast-container" aria-live="polite"></div>
 
   <script>
-    const API_BASE = '';          // same origin
+    const API_BASE = '';          
     let currentShortUrl = '';
-
-    /* ───────────────────────────── Shorten ──────────────────────────────── */
+    
     document.getElementById('shorten-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const input = document.getElementById('url-input');
@@ -555,7 +530,7 @@
         } else {
           showResult(data.data);
           input.value = '';
-          loadUrls();   // refresh list
+          loadUrls();
         }
       } catch {
         showError('Network error — is the server running?');
@@ -564,7 +539,6 @@
       }
     });
 
-    /* ───────────────────────────── Helpers ──────────────────────────────── */
     function setLoading(on) {
       const btn   = document.getElementById('shorten-btn');
       const label = document.getElementById('btn-label');
@@ -606,7 +580,6 @@
       document.getElementById('result-box').classList.remove('show');
     }
 
-    /* ───────────────────────────── Copy ─────────────────────────────────── */
     async function copyShortUrl() {
       if (!currentShortUrl) return;
       try {
@@ -620,7 +593,6 @@
       }
     }
 
-    /* ───────────────────────────── Toast ────────────────────────────────── */
     function toast(msg, type = 'success') {
       const el = document.createElement('div');
       el.className = `toast ${type}`;
@@ -632,7 +604,6 @@
       }, 3000);
     }
 
-    /* ───────────────────────────── URL List ─────────────────────────────── */
     async function loadUrls() {
       try {
         const res  = await fetch(`${API_BASE}/api/urls`);
@@ -655,7 +626,6 @@
         }
 
         container.innerHTML = '';
-        // newest first
         [...urls].reverse().forEach((item, i) => {
           const el = document.createElement('div');
           el.className = 'url-item';
@@ -682,7 +652,6 @@
             </div>
           `;
 
-          // Copy on short-url click with Ctrl/Cmd
           el.querySelector('.url-short').addEventListener('click', (e) => {
             if (e.ctrlKey || e.metaKey) {
               e.preventDefault();
@@ -708,7 +677,6 @@
         .replace(/"/g,'&quot;');
     }
 
-    /* ───────────────────────────── Init ─────────────────────────────────── */
     loadUrls();
   </script>
 </body>

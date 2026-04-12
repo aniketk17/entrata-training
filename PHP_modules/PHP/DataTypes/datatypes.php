@@ -13,7 +13,6 @@ MAIN DATA TYPES IN PHP:
 7. NULL
 8. Resource (advanced)
 
-===========================================
 */
 
 // 1. STRING
@@ -84,12 +83,10 @@ echo "<br>Type: " . gettype($x) . "<br><br>";
 
 
 /*
-===========================================
 NOTES:
 - PHP is a loosely typed language.
 - You don’t need to declare data types explicitly.
 - PHP automatically detects the type of variable.
 - gettype() function helps to check the type.
-===========================================
 */
 ?>

@@ -1,8 +1,5 @@
 <?php
-/**
- * logout.php — Destroys the session and clears the remember-me cookie.
 
- */
 
 session_start();
 
@@ -13,7 +10,6 @@ session_unset();
 session_destroy();
 
 // Step 3: Delete the "remember me" cookie from the browser 
-// To delete a cookie, set its expiry to a time in the PAST.
 if (isset($_COOKIE['remember_me'])) {
     setcookie(
         'remember_me',
@@ -26,6 +22,6 @@ if (isset($_COOKIE['remember_me'])) {
     );
 }
 
-// Redirect to login 
+// Redirect  to login 
 header('Location: login.php');
 exit;

@@ -103,13 +103,4 @@ $intNum = (int)$num;
 echo "Original: " . gettype($num) . "<br>";
 echo "Converted: " . gettype($intNum) . "<br>";
 
-
-/*
-===========================================
-NOTES:
-- PHP has 1000+ built-in functions
-- They save development time
-- Always check PHP documentation for usage
-===========================================
-*/
 ?>

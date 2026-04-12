@@ -1,10 +1,5 @@
-/**
- * Seed script — creates dummy categories, users, and posts.
- *
- * Usage:  node src/seeds/seed.js
- *
- * ⚠️  This DROPS all existing data before seeding.
- */
+// Seed script — creates dummy categories, users, and posts.
+
 
 const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, "..", "..", ".env") });
@@ -22,7 +17,6 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017";
 const DB_NAME = process.env.MONGO_DB_NAME || "blog-app";
 const SALT_ROUNDS = 10;
 
-// ─── Dummy Data ───────────────────────────────────────────────
 
 const CATEGORIES = ["Coding", "Entertainment", "Tech", "Lifestyle", "Science", "Design"];
 
@@ -273,14 +267,12 @@ The lesson: tools matter less than you think. Use what makes you productive, not
   },
 ];
 
-// ─── Seed Function ────────────────────────────────────────────
 
 async function seed() {
   console.log("Connecting to MongoDB...");
   await mongoose.connect(MONGO_URI, { dbName: DB_NAME });
   console.log("Connected.\n");
 
-  // Drop existing data
   console.log("Dropping existing data...");
   await Promise.all([
     User.deleteMany({}),
@@ -290,7 +282,6 @@ async function seed() {
     Comment.deleteMany({}),
   ]);
 
-  // Seed categories
   console.log("Seeding categories...");
   const categoryDocs = await Category.insertMany(
     CATEGORIES.map((name) => ({ name }))
@@ -301,7 +292,6 @@ async function seed() {
   });
   console.log(`  ✓ ${categoryDocs.length} categories`);
 
-  // Seed users + profiles
   console.log("Seeding users...");
   const userDocs = [];
   for (const u of USERS) {
@@ -322,7 +312,6 @@ async function seed() {
   }
   console.log(`  ✓ ${userDocs.length} users (password for all: password123)`);
 
-  // Seed posts
   console.log("Seeding posts...");
   for (const p of POSTS) {
     await Post.create({

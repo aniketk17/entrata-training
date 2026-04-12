@@ -1,13 +1,10 @@
 <?php
-/**
- * register.php — Handles registration form + logic.
- */
 
 require_once __DIR__ . '/users.php';
 
 session_start();
 
-// Already logged in? Redirect.
+
 if (isset($_SESSION['user'])) {
     header('Location: dashboard.php');
     exit;
@@ -23,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password  = $_POST['password'] ?? '';
     $confirm   = $_POST['confirm_password'] ?? '';
 
-    // Basic validation
     if (!$username || !$email || !$password || !$confirm) {
         $error = 'All fields are required.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -36,7 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $registered = registerUser($username, $email, $password);
 
         if ($registered) {
-            // Flash messages are written to session, read once, then deleted.
             $_SESSION['flash'] = "Account created! Please log in.";
             header('Location: login.php');
             exit;

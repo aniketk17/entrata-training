@@ -1,8 +1,5 @@
 <?php
-/**
- * login.php — Handles login form display + form submission.
- *
-*/
+
 
 require_once __DIR__ . '/users.php';
 
@@ -21,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $username   = trim($_POST['username'] ?? '');
     $password   = $_POST['password'] ?? '';
-    $remember   = isset($_POST['remember_me']); // checkbox
+    $remember   = isset($_POST['remember_me']);
 
     if (!$username || !$password) {
         $error = 'Please fill in all fields.';

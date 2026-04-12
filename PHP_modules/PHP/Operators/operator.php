@@ -1,9 +1,5 @@
 <?php
 /*
-===========================================
-            PHP OPERATORS
-===========================================
-
 Operators are used to perform operations on variables and values.
 
 TYPES OF OPERATORS:
@@ -15,7 +11,6 @@ TYPES OF OPERATORS:
 6. String Operators
 7. Array Operators
 
-===========================================
 */
 
 
@@ -128,13 +123,4 @@ echo "<br>";
 var_dump($arr1 === $arr2); // false
 
 
-/*
-===========================================
-NOTES:
-- == compares values only
-- === compares value + type (strict)
-- . is used for string concatenation
-- ++ and -- are very important in loops
-===========================================
-*/
 ?>

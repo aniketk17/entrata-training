@@ -1,6 +1,4 @@
-/**
- * Shared JSON shape for post responses (lists may omit content).
- */
+
 function formatPost(post, options = {}) {
   const { includeContent = true } = options;
   const up = post.upvotes?.length ?? 0;

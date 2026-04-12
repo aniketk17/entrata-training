@@ -1,14 +1,10 @@
 <?php
 /*
-===========================================
-            PHP STRINGS
-===========================================
 
 A string is a sequence of characters enclosed in:
 - Double quotes (" ")
 - Single quotes (' ')
 
-===========================================
 */
 
 // 1. CREATING STRINGS
@@ -91,13 +87,4 @@ $name = "Aniket";
 echo "Hello $name<br>";   // Variable works
 echo 'Hello $name<br>';   // Variable not parsed
 
-
-/*
-===========================================
-NOTES:
-- Strings are immutable (functions return new strings)
-- Use . for concatenation
-- Double quotes allow variables and escape sequences
-===========================================
-*/
 ?>

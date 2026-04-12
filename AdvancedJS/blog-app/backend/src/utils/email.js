@@ -14,10 +14,7 @@ function createTransport() {
   });
 }
 
-/**
- * @param {{ to: string; subject: string; text: string; html?: string }} opts
- * @returns {Promise<{ skipped?: boolean; messageId?: string }>}
- */
+
 async function sendMail(opts) {
   const from = process.env.EMAIL_FROM || process.env.SMTP_USER;
   const transport = createTransport();

@@ -8,18 +8,18 @@ File handling allows you to:
 - Delete files
 
 COMMON FUNCTIONS:
-- fopen()              → Open file
-- fwrite()             → Write data
-- fread()              → Read data
-- fclose()             → Close file
-- file_get_contents()  → Read entire file
-- file_put_contents()  → Write entire file
-- unlink()             → Delete file
+- fopen()               Open file
+- fwrite()              Write data
+- fread()               Read data
+- fclose()              Close file
+- file_get_contents()   Read entire file
+- file_put_contents()   Write entire file
+- unlink()              Delete file
 
 FILE MODES:
-- "r" → Read
-- "w" → Write (overwrite)
-- "a" → Append
+- "r"  Read
+- "w"  Write (overwrite)
+- "a"  Append
 - "x" → Create new file
 */
 

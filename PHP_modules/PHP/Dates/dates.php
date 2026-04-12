@@ -4,11 +4,11 @@
 PHP provides built-in functions to handle date and time.
 
 IMPORTANT FUNCTIONS:
-- date()        → Format current date/time
-- time()        → Current timestamp
-- strtotime()   → Convert string to timestamp
-- mktime()      → Create custom timestamp
-- date_default_timezone_set() → Set timezone
+- date()         Format current date/time
+- time()         Current timestamp
+- strtotime()    Convert string to timestamp
+- mktime()       Create custom timestamp
+- date_default_timezone_set() Set timezone
 */
 
 
@@ -99,22 +99,19 @@ echo "Days until New Year: $days<br><br>";
 
 
 /*
-====================================================
 IMPORTANT NOTES:
-----------------------------------------------------
 1. date() formats timestamp into readable form
 2. time() gives current timestamp
-3. strtotime() converts text → timestamp
+3. strtotime() converts text -> timestamp
 4. Always set timezone
 5. Use timestamps for calculations
 
 COMMON FORMAT SYMBOLS:
-- Y → Year (2026)
-- m → Month (01-12)
-- d → Day (01-31)
-- H → Hour (00-23)
-- i → Minutes
-- s → Seconds
-====================================================
+- Y -> Year (2026)
+- m -> Month (01-12)
+- d -> Day (01-31)
+- H -> Hour (00-23)
+- i -> Minutes
+- s -> Seconds
 */
 ?>
